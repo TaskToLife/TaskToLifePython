@@ -1,7 +1,8 @@
-def helloWorld(tradition):
+def sayHello(tradition):
     print(tradition)
+    return None
 
 def main():
-    helloWorld('Hello World!')
+    sayHello('Hello World!')
 
 main()
