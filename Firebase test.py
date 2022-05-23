@@ -1,14 +1,22 @@
-import json
+# To do:
+# 1. Change firebase (Maybe?)
+# 2. Change to unique ID instead of username for friends and blocked
+# 3. Upload to GitHub
+
+
 import bcrypt as bcrypt
 import firebase_admin
 import requests
+import os
+from dotenv import load_dotenv
 from firebase_admin import credentials
 from firebase_admin import db
 
+load_dotenv()
 
-cred = credentials.Certificate('AccountKey.json')
+cred = credentials.Certificate('AccountKey.json')  # AccountKey.json file required
 firebase_admin.initialize_app(cred, {
-    'databaseURL': "https://testing-a3c51-default-rtdb.firebaseio.com"
+    'databaseURL': os.getenv("DB_URL")  # .env file required
 })
 
 ref = db.reference("app/")
@@ -26,7 +34,6 @@ for i in range(1):
 
     salt = bcrypt.gensalt(rounds=10)
     encrypted_password = bcrypt.hashpw(password, salt).decode()
-
 
     logins.push({
         "email": email,
@@ -56,4 +63,3 @@ for i in range(1):
         "start": 8,
         "end": 22
     })
-
