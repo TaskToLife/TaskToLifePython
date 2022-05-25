@@ -1,50 +1,34 @@
+import json
 import firebase_admin
 from firebase_admin import credentials
-from firebase_admin import db
+from firebase_admin import firestore
 
-ref = db.reference("app/")
-admins = ref.child("admins")
-logins = ref.child("logins")
-players = ref.child("players")
-taskXP = ref.child("tasks")
+cred = credentials.Certificate('AccountKey.json')  # AccountKey.json file required
+firebase_admin.initialize_app(cred)
 
-cred = credentials.Certificate('AccountKey.json')
-firebase_admin.initialize_app(cred, {
-    'databaseURL': "https://testing-a3c51-default-rtdb.firebaseio.com"
-})
+db = firestore.client()
+
+admins = db.collection('admins')
+items = db.collection('items')
+logins = db.collection('logins')
+petsandplants = db.collection('petsandplants')
+players = db.collection('players')
+tasks = db.collection('tasks')
+
+
+def streamToDict(elem):
+    return {doc.id: doc.to_dict() for doc in elem.stream()}
 
 
 class Pet:
-    def __init__(self, name, breed, mood, accessories=None):
-        self.name = name
-        self.breed = breed
-        self.mood = mood
-        self.accessories = accessories
-
-    def changeName(self, newName):
-        self.name = newName
-
-    def changeMood(self, newMood):
-        self.mood = newMood
-
-    def addAccessory(self, accessory):
-        if accessory in self.accessories:
-            return False
-        self.accessories.append(accessory)
-        return True
-
-    def removeAccessory(self, accessory):
-        if accessory in self.accessories:
-            self.accessories.remove(accessory)
-            return True
-        return False
-
-    def getPetData(self):
-        return {"name": self.name, "breed": self.breed, "mood": self.mood, "accessories": self.accessories}
+    def __init__(self, petID):
+        data = streamToDict(petsandplants)[petID]
+        self.name = data['name']
+        self.category = data['category']
 
 
 class Plant:
-    def __init__(self, species, mood, accessories):
+    def __init__(self, species, mood=100, accessories=None):
         self.species = species
         self.mood = mood
         self.accessories = accessories
@@ -114,8 +98,3 @@ class Task:
 
     def removeComment(self, comment):
         self.comments.remove(comment)
-
-
-
-
-

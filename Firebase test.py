@@ -10,20 +10,21 @@ import requests
 import os
 from dotenv import load_dotenv
 from firebase_admin import credentials
-from firebase_admin import db
+from firebase_admin import firestore
 
 load_dotenv()
 
 cred = credentials.Certificate('AccountKey.json')  # AccountKey.json file required
-firebase_admin.initialize_app(cred, {
-    'databaseURL': os.getenv("DB_URL")  # .env file required
-})
+firebase_admin.initialize_app(cred)
 
-ref = db.reference("app/")
-admins = ref.child("admins")
-logins = ref.child("logins")
-players = ref.child("players")
-taskXP = ref.child("tasks")
+db = firestore.client()
+
+admins = db.collection('admins')
+items = db.collection('items')
+logins = db.collection('logins')
+petsandplants = db.collection('petsandplants')
+players = db.collection('players')
+tasks = db.collection('tasks')
 
 for i in range(1):
     user = requests.get('https://randomuser.me/api/').json()['results'][0]  # Just a random user generator for testing
@@ -35,31 +36,34 @@ for i in range(1):
     salt = bcrypt.gensalt(rounds=10)
     encrypted_password = bcrypt.hashpw(password, salt).decode()
 
-    logins.push({
+    ref = logins.document()
+    ref.set({
         "email": email,
-        "name": user["name"]["first"] + ' ' + user["name"]["last"],
         "password": encrypted_password,
-        "username": username
     })
 
-    admins.push(email)
+    userKey = str(ref.id)
 
-    players.push({
-        "pfp": "https://avatars.dicebear.com/api/identicon/" + user["name"]["first"] + ".svg",
-        "username": username,
-        "email": email,
-        "xp": 0,
-        "level": 0,
-        "mul": 0,
-        "cur": 0,
-        "bio": "Hi, I'm new here!",
-        "pets": [],
-        "plants": [],
-        "items": [],
-        "socials": {},
-        "friends": [],  # User ID instead of username
-        "blocked": [],  # User ID instead of username
-        "lists": [],
-        "start": 8,
-        "end": 22
+    admins.document(userKey).set({
+        "email": email
+    })
+
+    players.document(userKey).set({
+            "pfp": "https://avatars.dicebear.com/api/identicon/" + user["name"]["first"] + ".svg",
+            "username": username,
+            "email": email,
+            "xp": 0,
+            "level": 0,
+            "mul": 0,
+            "cur": 0,
+            "bio": "Hi, I'm new here!",
+            "pets": [],
+            "plants": [],
+            "items": [],
+            "socials": {},
+            "friends": [],  # User ID instead of username
+            "blocked": [],  # User ID instead of username
+            "lists": [],
+            "start": 8,
+            "end": 22
     })
