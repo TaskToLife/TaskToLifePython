@@ -147,7 +147,3 @@ class Task:
 
     def removeTag(self, tag):
         self.tags.remove(tag)
-
-
-Task("V7IsJiCh17DKNlqgCaqE").changePrivacy()
-print(Task("V7IsJiCh17DKNlqgCaqE").getPrivacy())
