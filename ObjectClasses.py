@@ -1,5 +1,8 @@
+import datetime
 import json
 import firebase_admin
+import bcrypt
+import requests
 from firebase_admin import credentials
 from firebase_admin import firestore
 
@@ -11,90 +14,137 @@ db = firestore.client()
 admins = db.collection('admins')
 items = db.collection('items')
 logins = db.collection('logins')
-petsandplants = db.collection('petsandplants')
 players = db.collection('players')
 tasks = db.collection('tasks')
+lists = db.collection('lists')
 
 
-def streamToDict(elem):
-    return {doc.id: doc.to_dict() for doc in elem.stream()}
+# Convert snapshot return type to dictionary
+def snapToDict(elem) -> dict:
+    elem = elem.get()
+    try:
+        iter(elem)
+        return {doc.id: doc.to_dict() for doc in elem}
+    except TypeError:
+        return {elem.id: elem.to_dict()}
 
 
-class Pet:
-    def __init__(self, petID):
-        data = streamToDict(petsandplants)[petID]
-        self.name = data['name']
-        self.category = data['category']
+# Generate random key that works with our database
+def getKey(ref) -> str:
+    return list(snapToDict(ref.document()).keys())[0]
 
 
-class Plant:
-    def __init__(self, species, mood=100, accessories=None):
-        self.species = species
-        self.mood = mood
-        self.accessories = accessories
+# # Get specific data by key
+# print(snapToDict(admins.document('245dsIgKk6A8tH0ZNQYk')))
+#
+# # Get specific data by child
+# print(snapToDict(admins.where("email", "==", "apandey3@ualberta.ca")))
+#
+# # Get all data
+# print(snapToDict(admins))
+#
+# # Get ordered data by child elem
+# data = snapToDict(admins.order_by('email', direction=firestore.Query.DESCENDING))
+# print(data)
+#
+# # Add data
+# key = getKey(admins)
+# admins.document(key).set(
+#     {
+#         "email": "akshatpandeymyself@gmail.com"
+#     }
+# )
+#
+# # Update data
+# logins.document("245dsIgKk6A8tH0ZNQYk").update(
+#     {
+#         "email": "apisop@gmail.com"
+#     }
+# )
+#
+# # Delete data
+# admins.document("1BEXOBL5gepNlSZt5wFh").delete()
 
-    def changeMood(self, newMood):
-        self.mood = newMood
-
-    def addAccessory(self, accessory):
-        if accessory in self.accessories:
-            return False
-        self.accessories.append(accessory)
-        return True
-
-    def removeAccessory(self, accessory):
-        if accessory in self.accessories:
-            self.accessories.remove(accessory)
-            return True
-        return False
-
-    def getPlantData(self):
-        return {"breed": self.species, "mood": self.mood, "accessories": self.accessories}
-
-
-class List:
-    def __init__(self, name, tasks):
-        self.name = name
-        self.tasks = tasks
-
-    def addTask(self, task):
-        self.tasks.append(task)
-
-    def removeTask(self, task):
-        self.removeTask(task)
-
-    def changeName(self, name):
-        self.name = name
+# Convert datatime object to string
+def myConverter(o):
+    if isinstance(o, datetime.datetime):
+        return o.__str__()
 
 
 class Task:
-    def __init__(self, title, notification, xp, checklist=None, priority=5, deadline=None, private=True, comments=None):
-        self.title = title
-        self.notification = notification
-        self.xp = xp
-        self.checklist = checklist
-        self.priority = priority
-        self.deadline = deadline
-        self.private = private
-        self.comments = comments
+    def __init__(self, userID):
+        data = snapToDict(tasks.document(userID))
+        if data[userID]:
+            data = data[userID]
 
-    def changeTitle(self, title):
-        self.title = title
+            # Integer elements
+            self.age = data["age"]
+            self.xp = data["xp"]
+            self.failed = data["failed"]
 
-    def changeNotification(self, notification):
-        self.notification = notification
+            # Boolean elements
+            self.completed = data["completed"]
+            self.private = data["private"]
+            self.repeatable = data["repeatable"]
+            self.starred = data["starred"]
 
-    def changePriority(self, priority):
-        self.priority = priority
+            # String elements
+            self.title = data["title"]
+            self.description = data["description"]
+            self.listID = data["listID"]
+            self.link = data["link"]
+            self.userID = data["userID"]
 
-    def changeDeadline(self, deadline):
-        self.deadline = deadline
+            # Datetime elements
+            self.start = datetime.datetime.fromisoformat(str(data["start"]))
+            self.end = datetime.datetime.fromisoformat(str(data["end"]))
+            self.timer = datetime.datetime.fromisoformat(str(data["timer"]))
+            self.deadline = datetime.datetime.fromisoformat(str(data["timer"]))
 
-    def changePrivacy(self):
-        self.private = not self.private
+            # String array elements
+            self.tags = data["tags"]
+            self.users = data["collab"]
 
-    def addComment(self, comment):
-        self.comments.append(comment)
+        else:
+            print("Data doesn't exist")
 
-    def removeComment(self, comment):
-        self.comments.remove(comment)
+        def getPrivacy():
+            return self.private
+
+        def changePrivacy():
+            self.private = not self.private
+
+        def getPlayers():
+            return self.users
+
+        def addPlayer(userID):
+            self.users.append(userID)
+
+        def removePlayer(userID):
+            self.users.remove(userID)
+
+        def getAge():
+            return self.age
+
+        def updateAge(age):
+            self.age = age
+
+        def getStarred():
+            return self.starred
+
+        def changeStarred():
+            self.starred = not self.starred
+
+        def getTags():
+            return self.tags
+
+        def addTag(tag):
+            self.tags.append(tag)
+
+        def removeTag(tag):
+            self.tags.remove(tag)
+
+
+
+
+Task("V7IsJiCh17DKNlqgCaqE")
