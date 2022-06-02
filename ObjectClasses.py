@@ -94,6 +94,7 @@ class Task:
             self.listID = data["listID"]
             self.link = data["link"]
             self.userID = data["userID"]
+            self.taskID = userID
 
             # Datetime elements
             self.start = datetime.datetime.fromisoformat(str(data["start"]))
@@ -108,43 +109,45 @@ class Task:
         else:
             print("Data doesn't exist")
 
-        def getPrivacy():
-            return self.private
+    def getPrivacy(self):
+        return self.private
 
-        def changePrivacy():
-            self.private = not self.private
+    def changePrivacy(self):
+        self.private = not self.private
+        tasks.document(self.taskID).update({
+            "private": self.private
+        })
 
-        def getPlayers():
-            return self.users
+    def getPlayers(self):
+        return self.users
 
-        def addPlayer(userID):
-            self.users.append(userID)
+    def addPlayer(self, userID):
+        self.users.append(userID)
 
-        def removePlayer(userID):
-            self.users.remove(userID)
+    def removePlayer(self, userID):
+        self.users.remove(userID)
 
-        def getAge():
-            return self.age
+    def getAge(self):
+        return self.age
 
-        def updateAge(age):
-            self.age = age
+    def updateAge(self, age):
+        self.age = age
 
-        def getStarred():
-            return self.starred
+    def getStarred(self):
+        return self.starred
 
-        def changeStarred():
-            self.starred = not self.starred
+    def changeStarred(self):
+        self.starred = not self.starred
 
-        def getTags():
-            return self.tags
+    def getTags(self):
+        return self.tags
 
-        def addTag(tag):
-            self.tags.append(tag)
+    def addTag(self, tag):
+        self.tags.append(tag)
 
-        def removeTag(tag):
-            self.tags.remove(tag)
-
-
+    def removeTag(self, tag):
+        self.tags.remove(tag)
 
 
-Task("V7IsJiCh17DKNlqgCaqE")
+Task("V7IsJiCh17DKNlqgCaqE").changePrivacy()
+print(Task("V7IsJiCh17DKNlqgCaqE").getPrivacy())
