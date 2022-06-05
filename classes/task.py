@@ -206,7 +206,7 @@ class Task:
         })
 
 
-def createTask(userID, listID, title, deadline):
+def createTask(userID, listID, title, deadline) -> Task:
     key = getKey(tasks)
     tasks.document(key).set(
         {
