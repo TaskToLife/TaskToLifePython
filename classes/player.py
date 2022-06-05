@@ -1,9 +1,10 @@
-from functions.functions import snapToDict
+import datetime
+import requests
+from functions.functions import *
 from firebase_admin import firestore
 
 db = firestore.client()
 players = db.collection('players')
-
 
 class Player:
     def __init__(self, userID):
@@ -191,3 +192,31 @@ class Player:
         players.document(self.userID).update({
             "socials": self.socials
         })
+
+    def getID(self):
+        return self.userID
+
+
+def createPlayer():
+    key = getKey(players)
+    players.document(key).set(
+        {
+            "blocked": [],
+            "categories": [],
+            "currency": 0,
+            "friend_req": [],
+            "friends": [],
+            "level": 1,
+            "multiplier": 0,
+            "notifications": [],
+            "pfp": "https://i.pinimg.com/736x/35/99/27/359927d1398df943a13c227ae0468357.jpg",
+            "plant": {
+                "growth": [],
+                "startDate": datetime.datetime.now(),
+                "type": "Pine"
+            },
+            "socials": {},
+            "username": requests.get("https://randomuser.me/api/").json()["results"][0]["login"]["username"]
+            "xp": 0
+        }
+    )

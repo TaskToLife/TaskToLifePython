@@ -4,7 +4,6 @@ from classes.list import List
 from firebase_admin import firestore
 
 db = firestore.client()
-
 tasks = db.collection('tasks')
 
 

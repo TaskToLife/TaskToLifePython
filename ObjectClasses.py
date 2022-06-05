@@ -1,6 +1,6 @@
 from functions.initializeApp import getDB
 from classes.player import Player
-from classes.list import List
+from classes.list import List, createList
 from classes.task import Task
 
 db = getDB()
@@ -43,8 +43,3 @@ lists = db.collection('lists')
 # # Delete data
 # admins.document("1BEXOBL5gepNlSZt5wFh").delete()
 
-
-player = Player("5VOVCxFm6IKK9QLs1t91")
-task = Task("V7IsJiCh17DKNlqgCaqE")
-category = List("W3msGQIN65uik9Ya5fvh")
-print(player.getUsername() + " " + task.getTitle() + " " + category.getName())

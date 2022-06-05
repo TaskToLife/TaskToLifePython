@@ -1,9 +1,8 @@
-from functions.functions import snapToDict
+from functions.functions import *
 from firebase_admin import firestore
 
 
 db = firestore.client()
-
 lists = db.collection('lists')
 
 
@@ -67,3 +66,16 @@ class List:
         lists.document(self.listID).update({
             "userID": self.username
         })
+
+
+def createList(userID, name, color):
+    key = getKey(lists)
+    lists.document(key).set(
+        {
+            "userID": userID,
+            "color": color,
+            "name": name,
+            "tasks": []
+        }
+    )
+    return List(key)
