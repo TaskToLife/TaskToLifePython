@@ -46,5 +46,5 @@ lists = db.collection('lists')
 
 player = Player("5VOVCxFm6IKK9QLs1t91")
 task = Task("V7IsJiCh17DKNlqgCaqE")
-list = List("W3msGQIN65uik9Ya5fvh")
-print(player.getUsername() + " " + task.getTitle() + " " + list.getName())
+category = List("W3msGQIN65uik9Ya5fvh")
+print(player.getUsername() + " " + task.getTitle() + " " + category.getName())
