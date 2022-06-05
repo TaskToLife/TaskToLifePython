@@ -338,7 +338,7 @@ class Player:
     def __init__(self, userID):
         data = snapToDict(players.document(userID))
         if data[userID]:
-            data = data["userID"]
+            data = data[userID]
 
             # List elements
             self.blocked = data["blocked"]
@@ -346,7 +346,7 @@ class Player:
             self.friend_req = data["friend_req"]
             self.friends = data["friends"]
             self.notifications = data["notifications"]
-            self.plant = data["growth"]  # { growth: [list of int per week], startDate: date, type: string }
+            self.plant = data["plant"]  # { growth: [list of int per week], startDate: date, type: string }
             self.socials = data["socials"]  # {Social (like FaceBook for example): string (username)}
 
             # Integer elements
@@ -420,7 +420,7 @@ class Player:
         return self.blocked
 
     def addBlocked(self, userID):
-        self.blocked.add(userID)
+        self.blocked.append(userID)
         players.document(self.userID).update({
             "blocked": self.blocked
         })
@@ -435,7 +435,7 @@ class Player:
         return self.categories
 
     def addCategory(self, category):
-        self.categories.add(category)
+        self.categories.append(category)
         players.document(self.userID).update({
             "categories": self.categories
         })
@@ -450,13 +450,13 @@ class Player:
         return self.friend_req
 
     def addFriendReqs(self, req):
-        self.friend_req.add(req)
+        self.friend_req.append(req)
         players.document(self.userID).update({
             "friend_req": self.friend_req
         })
 
     def removeFriendReqs(self, req):
-        self.friend_req.add(req)
+        self.friend_req.remove(req)
         players.document(self.userID).update({
             "friend_req": self.friend_req
         })
@@ -465,7 +465,7 @@ class Player:
         return self.friends
 
     def addFriend(self, userID):
-        self.friends.add(userID)
+        self.friends.append(userID)
         players.document(self.userID).update({
             "friends": self.friends
         })
@@ -480,13 +480,7 @@ class Player:
         return self.notifications
 
     def addNotification(self, notification):
-        self.notifications.add(notification)
-        players.document(self.userID).update({
-            "notifications": self.notifications
-        })
-
-    def removeNotification(self, notification):
-        self.notifications.remove(notification)
+        self.notifications.append(notification)
         players.document(self.userID).update({
             "notifications": self.notifications
         })
@@ -526,7 +520,5 @@ class Player:
         players.document(self.userID).update({
             "socials": self.socials
         })
-
-
 
 
