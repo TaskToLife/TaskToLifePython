@@ -1,7 +1,9 @@
+import datetime
+
 from functions.initializeApp import getDB
-from classes.player import Player
+from classes.player import Player, createPlayer
 from classes.list import List, createList
-from classes.task import Task
+from classes.task import Task, createTask
 
 db = getDB()
 
@@ -43,3 +45,9 @@ lists = db.collection('lists')
 # # Delete data
 # admins.document("1BEXOBL5gepNlSZt5wFh").delete()
 
+elem1 = createPlayer()
+print(elem1.getUsername())
+elem2 = createList(elem1.getID(), "TaskToLife", "red")
+print(elem2.getName())
+elem3 = createTask(elem1.getID(), elem2.getID(), "Build firebase", datetime.datetime.now() + datetime.timedelta(days=1))
+print(elem3.getTitle())

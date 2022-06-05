@@ -6,6 +6,7 @@ from firebase_admin import firestore
 db = firestore.client()
 players = db.collection('players')
 
+
 class Player:
     def __init__(self, userID):
         data = snapToDict(players.document(userID))
@@ -197,7 +198,7 @@ class Player:
         return self.userID
 
 
-def createPlayer():
+def createPlayer() -> Player:
     key = getKey(players)
     players.document(key).set(
         {
@@ -212,11 +213,12 @@ def createPlayer():
             "pfp": "https://i.pinimg.com/736x/35/99/27/359927d1398df943a13c227ae0468357.jpg",
             "plant": {
                 "growth": [],
-                "startDate": datetime.datetime.now(),
+                "startDate": str(datetime.datetime.now()),
                 "type": "Pine"
             },
             "socials": {},
-            "username": requests.get("https://randomuser.me/api/").json()["results"][0]["login"]["username"]
+            "username": requests.get("https://randomuser.me/api/").json()["results"][0]["login"]["username"],
             "xp": 0
         }
     )
+    return Player(key)

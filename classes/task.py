@@ -1,5 +1,5 @@
 import datetime
-from functions.functions import snapToDict
+from functions.functions import *
 from classes.list import List
 from firebase_admin import firestore
 
@@ -204,3 +204,33 @@ class Task:
         tasks.document(self.taskID).update({
             "days": self.days
         })
+
+
+def createTask(userID, listID, title, deadline):
+    key = getKey(tasks)
+    tasks.document(key).set(
+        {
+            "age": 0,
+            "xp": 0,
+            "failed": 0,
+            "timer": 60,
+            "completed": False,
+            "private": True,
+            "repeatable": False,
+            "starred": False,
+            "userID": userID,
+            "listID": listID,
+            "title": title,
+            "description": "",
+            "link": "",
+            "start": str(datetime.datetime.now()),
+            "end": str(deadline),
+            "deadline": str(deadline),
+            "tags": [],
+            "collab": [],
+            "days": [],
+            "location": {}
+        }
+    )
+    List(listID).addTask(key)
+    return Task(key)

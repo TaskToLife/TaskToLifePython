@@ -1,3 +1,4 @@
+from classes.player import Player
 from functions.functions import *
 from firebase_admin import firestore
 
@@ -34,6 +35,9 @@ class List:
             "name": self.name
         })
 
+    def getID(self):
+        return self.listID
+
     def getColor(self):
         return self.color
 
@@ -68,7 +72,7 @@ class List:
         })
 
 
-def createList(userID, name, color):
+def createList(userID, name, color) -> List:
     key = getKey(lists)
     lists.document(key).set(
         {
@@ -78,4 +82,5 @@ def createList(userID, name, color):
             "tasks": []
         }
     )
+    Player(userID).addCategory(key)
     return List(key)
