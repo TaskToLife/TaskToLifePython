@@ -189,9 +189,8 @@ class Task:
     def getLoc(self):
         return self.location
 
-    def changeLoc(self, long, lat):
-        self.location["long"] = long
-        self.location["lat"] = lat
+    def changeLoc(self, loc):
+        self.location = loc
         tasks.document(self.taskID).update({
             "location": self.location
         })
@@ -229,7 +228,7 @@ def createTask(userID, listID, title, deadline) -> Task:
             "tags": [],
             "collab": [],
             "days": [],
-            "location": {}
+            "location": ""
         }
     )
     List(listID).addTask(key)

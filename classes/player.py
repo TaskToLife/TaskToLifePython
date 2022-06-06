@@ -210,7 +210,7 @@ def createPlayer() -> Player:
             "level": 1,
             "multiplier": 0,
             "notifications": [],
-            "pfp": "https://i.pinimg.com/736x/35/99/27/359927d1398df943a13c227ae0468357.jpg",
+            "pfp": "https://avatars.dicebear.com/api/identicon/" + key + ".svg",
             "plant": {
                 "growth": [],
                 "startDate": str(datetime.datetime.now()),
