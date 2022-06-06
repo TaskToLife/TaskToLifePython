@@ -2,7 +2,6 @@ from classes.player import Player
 from functions.functions import *
 from firebase_admin import firestore
 
-
 db = firestore.client()
 lists = db.collection('lists')
 

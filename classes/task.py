@@ -1,3 +1,6 @@
+# Add start and end func
+# Add start and end variables to player class
+
 import datetime
 from functions.functions import *
 from classes.list import List
@@ -8,10 +11,10 @@ tasks = db.collection('tasks')
 
 
 class Task:
-    def __init__(self, userID):
-        data = snapToDict(tasks.document(userID))
-        if data[userID]:
-            data = data[userID]
+    def __init__(self, taskID):
+        data = snapToDict(tasks.document(taskID))
+        if data[taskID]:
+            data = data[taskID]
 
             # Integer elements
             self.age = data["age"]
@@ -26,7 +29,7 @@ class Task:
             self.starred = data["starred"]
 
             # String elements
-            self.taskID = userID
+            self.taskID = taskID
             self.title = data["title"]
             self.description = data["description"]
             self.listID = data["listID"]
@@ -100,6 +103,19 @@ class Task:
         self.starred = not self.starred
         tasks.document(self.taskID).update({
             "starred": self.starred
+        })
+
+    def getStartAndEnd(self):
+        return self.start, self.end
+
+    def changeStartAndEnd(self, start=None, end=None):
+        if start is not None:
+            self.start = str(start)
+        if end is not None:
+            self.end = str(end)
+        tasks.document(self.taskID).update({
+            "start": self.start,
+            "end": self.end
         })
 
     def getTags(self):

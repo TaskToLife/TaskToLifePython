@@ -27,6 +27,8 @@ class Player:
             self.level = data["level"]
             self.multiplier = data["multiplier"]
             self.xp = data["xp"]
+            self.start = data["start"]
+            self.end = data["end"]
 
             # String elements
             self.userID = userID
@@ -87,6 +89,17 @@ class Player:
         self.currency = currency
         players.document(self.userID).update({
             "currency": self.currency
+        })
+
+    def getStartAndEnd(self):
+        return self.start, self.end
+
+    def changeStartAndEnd(self, start=8, end=12):
+        self.start = start
+        self.end = end
+        players.document(self.userID).update({
+            "start": self.start,
+            "end": self.end
         })
 
     def getBlocked(self):
@@ -217,6 +230,8 @@ def createPlayer() -> Player:
                 "type": "Pine"
             },
             "socials": {},
+            "start": 6,
+            "end": 10,
             "username": requests.get("https://randomuser.me/api/").json()["results"][0]["login"]["username"],
             "xp": 0
         }
