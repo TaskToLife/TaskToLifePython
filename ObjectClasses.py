@@ -4,6 +4,7 @@ from functions.initializeApp import getDB
 from classes.player import Player, createPlayer
 from classes.list import List, createList
 from classes.task import Task, createTask
+from classes.login import *
 
 db = getDB()
 
@@ -53,3 +54,7 @@ lists = db.collection('lists')
 #                    elem2.getID(),
 #                    "Build firebase", datetime.datetime.now() + datetime.timedelta(days=1))
 # print(elem3.getTitle())
+
+# signUp()
+# print(changePass("ap@gmail.com", "akshat", "pass"))
+# print(login("ap@gmail.com", "pass"))
