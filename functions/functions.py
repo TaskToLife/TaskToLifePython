@@ -19,3 +19,10 @@ def getData(dictionary) -> dict:
         return dictionary[list(dictionary.keys())[0]]
     except IndexError:
         print(dictionary)
+
+
+def getData2(dictionary) -> dict:
+    try:
+        return dictionary[list(dictionary.keys())[0]]
+    except IndexError:
+        print(dictionary)

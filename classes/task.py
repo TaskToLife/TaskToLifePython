@@ -1,6 +1,3 @@
-# Add start and end func
-# Add start and end variables to player class
-
 import datetime
 from functions.functions import *
 from classes.list import List
