@@ -70,3 +70,26 @@ def changePass(email, password, new_pass) -> int:
         )
         return 1
     return 0
+
+
+# Change email function
+# - Returns -1 if the email was found
+# - Returns 0 if the password was incorrect
+# - Returns 1 if the password was correct and email was changed
+def changeEmail(email, password, new_email) -> int:
+    data = snapToDict(logins.where("email", "==", email.lower()))
+    if data == {}:
+        return -1
+
+    key = list(data.keys())[0]
+    data = getData(data)
+
+    success = bcrypt.checkpw(password.encode(), data["password"])
+    if success:
+        logins.document(key).update(
+            {
+                "email": new_email,
+            }
+        )
+        return 1
+    return 0

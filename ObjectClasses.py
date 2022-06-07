@@ -56,5 +56,6 @@ lists = db.collection('lists')
 # print(elem3.getTitle())
 
 # signUp()
-# print(changePass("ap@gmail.com", "akshat", "pass"))
+# print(changeEmail("ap2@gmail.com", "pass", "ap@gmail.com"))
+# print(changePass("ap@gmail.com", "pass", "new_pass"))
 # print(login("ap@gmail.com", "pass"))
