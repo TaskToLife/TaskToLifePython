@@ -2,8 +2,11 @@
 #add taskSimple()
 #add tasksDetailed()
 #add addNewTask()
-#add taskHistory()
+#add options to taskHistory()
 #add profile()
+
+from functions import *
+from classes import *
 
 """
 This is the main loop of the application
@@ -56,7 +59,33 @@ def addNewTask(userID):
 Displays all completed task
 """
 def taskHistory(userID):
-    return
+    taskList = []
+    docs = tasks.where("userID", "==", userID)\
+    .where("completed", "==", True).get()
+    if len(docs) > 0:
+        i = 1
+        for doc in docs:
+            task = doc.to_dict()
+            taskList.append(task)
+            print(  "============================================",
+                    "Task Number:", n,
+                    "\nTitle:", task["title"], 
+                    "\nDescription:", task["description"], 
+                    "\nCompletion Date:", task["end"][0:10])
+    else: 
+        print("No complete task found")
+
+    print(  "\n1. Edit Task",
+            "\n2. Go Back")
+    choice = input( "What would you like to do? ")
+    while choice not in ["1", "2"]:
+        choice = input( "Please enter a vaild number: ")
+    if choice == "1":
+        taskNum = input("What task you like to edit: ")
+        while taskNum not in range(1, i):
+            taskNum = input("Please enter a vaild number: ")
+    else:
+        return  
 
 """
 Displays the user profile, giving access to change their data
