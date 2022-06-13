@@ -7,6 +7,7 @@
 import datetime
 from functions import *
 from classes import *
+from ObjectClasses import *
 
 """
 This is the main loop of the application
@@ -41,13 +42,47 @@ def mainLoop(userID):
 Displays the task list simply by displaying just the name
 """
 def tasksSimple(userID):
-    return
+    docs = tasks.where("userID", "==", userID)\
+        .where("completed", "==", False).get()
+    print("="*32, "\nCurrent Tasks:")
+    if len(docs) > 0:
+        for doc in docs:
+            task = doc.to_dict()             
+            print(task["title"])
+    else: 
+        print("Nothing To Do")
+
 
 """
 Displays a detailed list of the tasks, giving access to delete and edit task
 """
 def tasksDetailed(userID):
-    return
+    taskList = []
+    docs = tasks.where("userID", "==", userID)\
+        .where("completed", "==", False).get()
+    if len(docs) > 0:
+        i = 1
+        for doc in docs:
+            task = Task(doc.id)
+            taskList.append(task)               
+            print(  "="*32,
+                    "\nTask Number:", i,
+                    "\nTitle:", task.getTitle(),
+                    "\nDescription:", task.getDescription(),
+                    "\nTimer:", task.getTimer(),
+                    "\nDeadline:", task.getDeadline().strftime("%Y-%m-%d"),
+                    "\nLocation:", task.getLoc(),
+                    "\nPrivate:", task.getPrivacy(),
+                    "\nStarred:", task.getStarred(),
+                    "\nRepeatable:", task.getRepeatable(), 
+                    "\nTags:", end=" ")
+            if len(task.getTags()) > 0:
+                for tag in task.getTags():
+                    print(tag, end=", ")
+                print()
+            else:
+                print("No tags specified")
+            i += 1
 
 """
 Adds new task the task list
@@ -59,24 +94,21 @@ def addNewTask(userID):
 Displays all completed task
 """
 def taskHistory(userID):
-    taskList = []
-    docs = tasks.where("userID", "==", userID)\
-    .where("completed", "==", True).get()
+    completedTaskList = []
+    docs = tasks.where("userID", "==", userID).get()
     if len(docs) > 0:
         i = 1
         for doc in docs:
-            task = doc.to_dict()
-            taskList.append(task)
-            date = datetime.strptime(task["end"][0:10], "%Y-%m-%d")
+            task = Task(doc.id)
 
-            if datetime.date.today() - date < 30:
-
-                print(  "============================================",
-                        "Task Number:", n,
-                        "\nTitle:", task["title"],
-                        "\nDescription:", task["description"],
-                        "\nCompletion Date:", task["end"][0:10])
-
+            if (datetime.datetime.now() - task.getStartAndEnd()[1]).days < 30:
+                completedTaskList.append(task)
+                print(  "="*32,
+                        "\nTask Number:", i,
+                        "\nTitle:", task.getTitle(),
+                        "\nDescription:", task.getDescription(),
+                        "\nCompletion Date:", task.getStartAndEnd()[1].strftime("%Y-%m-%d"))
+            i += 1
     else: 
         print("No complete task found")
 
@@ -92,11 +124,11 @@ def taskHistory(userID):
     else:
         return  
 
+
 """
 Displays the user profile, giving access to change their data
 """
 def profile(userID):
     return
 
-
-
+tasksDetailed("GCfxc0X812iEKxQEkk3d") 
