@@ -4,7 +4,7 @@
 #add addNewTask()
 #add options to taskHistory()
 #add profile()
-
+import datetime
 from functions import *
 from classes import *
 
@@ -67,11 +67,16 @@ def taskHistory(userID):
         for doc in docs:
             task = doc.to_dict()
             taskList.append(task)
-            print(  "============================================",
-                    "Task Number:", n,
-                    "\nTitle:", task["title"], 
-                    "\nDescription:", task["description"], 
-                    "\nCompletion Date:", task["end"][0:10])
+            date = datetime.strptime(task["end"][0:10], "%Y-%m-%d")
+
+            if datetime.date.today() - date < 30:
+
+                print(  "============================================",
+                        "Task Number:", n,
+                        "\nTitle:", task["title"],
+                        "\nDescription:", task["description"],
+                        "\nCompletion Date:", task["end"][0:10])
+
     else: 
         print("No complete task found")
 
@@ -92,3 +97,6 @@ Displays the user profile, giving access to change their data
 """
 def profile(userID):
     return
+
+
+
