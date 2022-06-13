@@ -95,7 +95,8 @@ Displays all completed task
 """
 def taskHistory(userID):
     completedTaskList = []
-    docs = tasks.where("userID", "==", userID).get()
+    docs = tasks.where("userID", "==", userID)\
+        .where("completed", "==", True).get()
     if len(docs) > 0:
         i = 1
         for doc in docs:
