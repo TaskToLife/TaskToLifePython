@@ -1,7 +1,12 @@
+import os
 import datetime
 import requests
+from notify_run import Notify
+from dotenv import load_dotenv
 from functions.functions import *
 from firebase_admin import firestore
+
+load_dotenv()
 
 db = firestore.client()
 players = db.collection('players')
@@ -171,6 +176,10 @@ class Player:
             "notifications": self.notifications
         })
 
+    def sendNotification(self, notification: str):
+        notify = Notify(endpoint=os.getenv('NTF_URL'))
+        notify.send(notification)
+
     def getPlant(self):
         return self.plant
 
@@ -231,7 +240,7 @@ def createPlayer() -> Player:
             },
             "socials": {},
             "start": 6,
-            "end": 10,
+            "end": 22,
             "username": requests.get("https://randomuser.me/api/").json()["results"][0]["login"]["username"],
             "xp": 0
         }
