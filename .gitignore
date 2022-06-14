@@ -1,4 +1,6 @@
 AccountKey.json
 .env
 .idea
-*__pycache__
+__pycache__*
+functions.__pycache__*
+classes.__pycache__*
