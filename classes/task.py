@@ -15,6 +15,7 @@ class Task:
         data = snapToDict(tasks.document(taskID))
         if data[taskID]:
             data = data[taskID]
+            self.taskID = taskID
 
             # Integer elements
             self.age = data["age"]
@@ -51,6 +52,9 @@ class Task:
 
         else:
             print("Data doesn't exist")
+
+    def getID(self):
+        return self.taskID
 
     def getPrivacy(self):
         return self.private
