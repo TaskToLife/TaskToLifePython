@@ -23,9 +23,10 @@ class Player:
             self.categories = data["categories"]
             self.friend_req = data["friend_req"]
             self.friends = data["friends"]
-            self.notifications = data["notifications"]
+            self.notifications = data["notifications"]  # List of notification elems: {text: String, type: String}
             self.plant = data["plant"]  # { growth: [list of int per week], startDate: date, type: string }
             self.socials = data["socials"]  # {Social (like FaceBook for example): string (username)}
+            self.blocked_notifications = data["blocked_notifications"]  # [types: report, friend_req, task, collab]
 
             # Integer elements
             self.currency = data["currency"]
@@ -170,15 +171,19 @@ class Player:
     def getNotifications(self):
         return self.notifications
 
-    def addNotification(self, notification):
+    def addNotification(self, notification: dict):
+        if notification["type"] in self.blocked_notifications:
+            return
         self.notifications.append(notification)
         players.document(self.userID).update({
             "notifications": self.notifications
         })
 
-    def sendNotification(self, notification: str):
+    def sendNotification(self, notification: dict):
+        if notification["type"] in self.blocked_notifications:
+            return
         notify = Notify(endpoint=os.getenv('NTF_URL'))
-        notify.send(notification)
+        notify.send(notification["text"])
 
     def getPlant(self):
         return self.plant
