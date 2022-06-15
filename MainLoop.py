@@ -95,6 +95,15 @@ def tasksDetailed(userID):
 Adds new task the task list
 """
 def addNewTask(userID):
+    # title = input("Title: ")
+    # desc = input("Description: ")
+    # category = input("Category: ")
+    # privacy = input("Private? (Y/n): ")
+    # deadline = input("Deadline: ")
+    # newTask = createTask(userID, category, title, deadline)
+    # newTask.changeDescription(desc)
+    # if privacy == "Y".lower():
+    #     newTask.changePrivacy()
     return
 
 """
@@ -126,10 +135,13 @@ def taskHistory(userID):
     while choice not in ["1", "3"]:
         choice = input( "Please enter a vaild number: ")
     if choice == "1":
-        taskNum = input("What task you like to edit: ")
-        while taskNum not in range(1, i):
-            taskNum = input("Please enter a vaild number: ")
-        editTask(completedTaskList[i - 1])
+        if len(docs) > 0:
+            taskNum = input("What task you like to edit: ")
+            while taskNum not in range(1, i):
+                taskNum = input("Please enter a vaild number: ")
+            editTask(completedTaskList[i - 1])
+        else:
+            print("No completed tasks found")
     else:
         return  
 
