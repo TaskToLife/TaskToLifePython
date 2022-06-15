@@ -66,10 +66,10 @@ def tasksDetailed(userID):
         for doc in docs:
             task = Task(doc.id)
             taskList.append(task)               
-            displayTask(task)
+            displayTask(task, i)
             i += 1
     
-    loop = true
+    loop = True
     while loop:
         print(  "\n1. Edit Task",
                 "\n2. Delete Task", 
@@ -148,7 +148,7 @@ If 1, can only change the completion
 def editTask(task):
     return
 
-def displayTask(task):
+def displayTask(task, i):
     print(  "="*32,
             "\nTask Number:", i,
             "\nTitle:", task.getTitle(),
@@ -167,4 +167,6 @@ def displayTask(task):
     else:
         print("No tags specified")
 
-tasksDetailed("GCfxc0X812iEKxQEkk3d") 
+# Testing of task
+# tasksDetailed("GCfxc0X812iEKxQEkk3d")
+mainLoop("GCfxc0X812iEKxQEkk3d");
