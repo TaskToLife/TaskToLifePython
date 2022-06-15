@@ -66,10 +66,10 @@ def tasksDetailed(userID):
         for doc in docs:
             task = Task(doc.id)
             taskList.append(task)               
-            displayTask(task)
+            displayTask(task, i)
             i += 1
     
-    loop = true
+    loop = True
     while loop:
         print(  "\n1. Edit Task",
                 "\n2. Delete Task", 
@@ -79,9 +79,9 @@ def tasksDetailed(userID):
             choice = input( "Please enter a vaild number: ")
         if choice == "1":
             taskNum = input("What task you like to edit: ")
-            while taskNum not in range(1, i):
+            while int(taskNum) not in range(1, i):
                 taskNum = input("Please enter a vaild number: ")
-            editTask(taskList[i - 1])
+            editTask(taskList[int(taskNum) - 1])
         elif choice == "2":
             taskNum = input("What task you like to delete: ")
             while taskNum not in range(1, i):
@@ -148,7 +148,7 @@ If 1, can only change the completion
 def editTask(task):
     return
 
-def displayTask(task):
+def displayTask(task, i):
     print(  "="*32,
             "\nTask Number:", i,
             "\nTitle:", task.getTitle(),
@@ -167,4 +167,4 @@ def displayTask(task):
     else:
         print("No tags specified")
 
-tasksDetailed("GCfxc0X812iEKxQEkk3d") 
+tasksDetailed("ecqH3LbUR1Ui0Nepl6Da") 
