@@ -5,6 +5,7 @@
 #add sort functionality to tasksDetailed()
 
 import datetime
+from turtle import color
 from functions import *
 from classes import *
 from ObjectClasses import *
@@ -79,13 +80,21 @@ def tasksDetailed(userID):
             choice = input( "Please enter a vaild number: ")
         if choice == "1":
             taskNum = input("What task you like to edit: ")
-            while int(taskNum) not in range(1, i):
-                taskNum = input("Please enter a vaild number: ")
-            editTask(taskList[int(taskNum) - 1])
-        elif choice == "2":
-            taskNum = input("What task you like to delete: ")
+            if taskNum.isdigit(): #check
+                taskNum = int(taskNum)
             while taskNum not in range(1, i):
                 taskNum = input("Please enter a vaild number: ")
+                if taskNum.isdigit(): #check2
+                    taskNum = int(taskNum)
+            editTask(taskList[taskNum - 1])
+        elif choice == "2":
+            taskNum = input("What task you like to delete: ")
+            if taskNum.isdigit(): #check
+                taskNum = int(taskNum)
+            while taskNum not in range(1, i):
+                taskNum = input("Please enter a vaild number: ")
+                if taskNum.isdigit(): #check2
+                    taskNum = int(taskNum)
             tasks.document(taskList[taskNum - 1]).delete()
             taskList.remove(taskNum - 1)
         else:
@@ -95,7 +104,50 @@ def tasksDetailed(userID):
 Adds new task the task list
 """
 def addNewTask(userID):
-    return
+    docs = lists.where("userID", "==", userID).get()
+    doc_list = []
+    for doc in docs:
+        doc_list.append(doc)
+    title = input("Title: ")
+    desc = input("Description: ")
+    category_name = input("Category Name: ")
+    for i in range(len(doc_list)):
+        if doc_list[i].get("name") != category_name:
+            cat_color = input("Choose a color for the category: ")
+            catID = createList(userID, category_name, cat_color)
+            break
+
+    privacy = input("Public? (Y/n): ")
+    deadline = input("Deadline: ")
+    newTask = createTask(userID, catID.getID(), title, deadline)
+    newTask.changeDescription(desc)
+    if privacy == "Y".lower():
+        newTask.changePrivacy()
+
+
+"""
+If 0, Gives the ability to change any of the task properties. 
+If 1, can only change the completion
+"""
+def editTask(task):
+    editable_list = ["categopry", "collab", "deadline", "description", "link", "location", "privacy", "repeatable", "starred", "tags", "timer", "title"]
+    print("1. Edit task properties")
+    print("2. Complete the task")
+    userChoice = input("What would you like to do?: ")
+    while userChoice not in ["1", "2"]:
+            userChoice = input( "Please enter a vaild number: ")
+    if userChoice == "1":
+        editDone = False
+        while not editDone:
+            for i in range(len(editable_list)):
+                print(str(i+1) + ".", editable_list[i])
+            userEdit = input("What would you like to edit?: ")
+            if userEdit == "1":
+                new_desc = input("Enter your new description: ")
+                task.changeDescription(new_desc)
+                return
+    elif userChoice == "2":
+        task.changeCompleted()
 
 """
 Displays all completed task
@@ -126,10 +178,13 @@ def taskHistory(userID):
     while choice not in ["1", "3"]:
         choice = input( "Please enter a vaild number: ")
     if choice == "1":
-        taskNum = input("What task you like to edit: ")
-        while taskNum not in range(1, i):
-            taskNum = input("Please enter a vaild number: ")
-        editTask(completedTaskList[i - 1])
+        if len(docs) > 0:
+            taskNum = input("What task you like to edit: ")
+            while taskNum not in range(1, i):
+                taskNum = input("Please enter a vaild number: ")
+            editTask(completedTaskList[i - 1])
+        else:
+            print("No completed tasks found")
     else:
         return  
 
@@ -141,12 +196,6 @@ def profile(userID):
     return
 
 
-"""
-If 0, Gives the ability to change any of the task properties. 
-If 1, can only change the completion
-"""
-def editTask(task):
-    return
 
 def displayTask(task, i):
     print(  "="*32,
@@ -167,4 +216,6 @@ def displayTask(task, i):
     else:
         print("No tags specified")
 
-tasksDetailed("ecqH3LbUR1Ui0Nepl6Da") 
+# Testing of task
+# tasksDetailed("GCfxc0X812iEKxQEkk3d")
+mainLoop("GCfxc0X812iEKxQEkk3d")
