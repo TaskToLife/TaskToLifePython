@@ -130,22 +130,41 @@ If 0, Gives the ability to change any of the task properties.
 If 1, can only change the completion
 """
 def editTask(task):
-    editable_list = ["categopry", "collab", "deadline", "description", "link", "location", "privacy", "repeatable", "starred", "tags", "timer", "title"]
+    editable_list = ["category", "collab", "deadline", "description", "link", "location", "privacy", "repeatable", "starred", "tags", "timer", "title"]
     print("1. Edit task properties")
     print("2. Complete the task")
     userChoice = input("What would you like to do?: ")
     while userChoice not in ["1", "2"]:
             userChoice = input( "Please enter a vaild number: ")
     if userChoice == "1":
+        print()
         editDone = False
         while not editDone:
             for i in range(len(editable_list)):
                 print(str(i+1) + ".", editable_list[i])
             userEdit = input("What would you like to edit?: ")
             if userEdit == "1":
-                new_desc = input("Enter your new description: ")
-                task.changeDescription(new_desc)
+                new_cat = input("What category would you like to change to?: ")
+            elif userEdit == "3":
                 return
+            elif userEdit == "4":
+                return
+            elif userEdit == "5":
+                return
+            elif userEdit == "7":
+                return
+            elif userEdit == "8":
+                return
+            elif userEdit == "9":
+                return
+            elif userEdit == "10":
+                return
+            elif userEdit == "11":
+                return
+            elif userEdit == "12":
+                return
+            else:
+                print("That option is either currently unavailable or does not exist.")
     elif userChoice == "2":
         task.changeCompleted()
 
