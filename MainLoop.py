@@ -86,7 +86,7 @@ def tasksDetailed(userID):
                 taskNum = input("Please enter a vaild number: ")
                 if taskNum.isdigit(): #check2
                     taskNum = int(taskNum)
-            editTask(taskList[taskNum - 1])
+            editTask(userID, taskList[taskNum - 1])
         elif choice == "2":
             taskNum = input("What task you like to delete: ")
             if taskNum.isdigit(): #check
@@ -129,8 +129,14 @@ def addNewTask(userID):
 If 0, Gives the ability to change any of the task properties. 
 If 1, can only change the completion
 """
-def editTask(task):
-    editable_list = ["category", "collab", "deadline", "description", "link", "location", "privacy", "repeatable", "starred", "tags", "timer", "title"]
+def editTask(userID, task):
+    editable_list = ["category", "collab", "deadline", "description", "location", "privacy", "repeatable", "starred", "tags", "timer", "title"]
+    
+    docs = lists.where("userID", "==", userID).get()
+    doc_list = []
+    for doc in docs:
+        doc_list.append(doc)
+    
     print("1. Edit task properties")
     print("2. Complete the task")
     userChoice = input("What would you like to do?: ")
@@ -143,35 +149,59 @@ def editTask(task):
             for i in range(len(editable_list)):
                 print(str(i+1) + ".", editable_list[i])
             userEdit = input("What would you like to edit?: ")
+            # Category change not working atm
             # if userEdit == "1":
             #     new_cat = input("What category would you like to change to?: ")
-            # elif userEdit == "3":
+            #     for i in range(len(doc_list)):
+            #         if doc_list[i].get("name") == new_cat:
+            #             task.changeCategory(doc_list[i])
+            #             break
+            #         else:
+            #             cat_color = input("Choose a color for the category: ")
+            #             catID = createList(userID, new_cat, cat_color)
+            #             task.changeCategory(catID.getID())
+            #             break
+            # No idea what do with this
+            # elif userEdit == "2":
             #     return
+            if userEdit == "3":
+                new_deadline = input("Please enter your new deadline (YYYY-MM-DD): ")
+                task.setDeadline(new_deadline)
             if userEdit == "4":
                 new_desc = input("Enter your new description: ")
                 task.changeDescription(new_desc)
+                print("Description has been changed.\n")
                 return
+            # Editing Location, not sure how we wanna do this
             # elif userEdit == "5":
             #     return
-            # elif userEdit == "7":
-            #     return
-            # elif userEdit == "8":
+            elif userEdit == "6":
+                task.changePrivacy()
+                print("Privacy has been changed.\n")
                 return
-            elif userEdit == "9":
+            elif userEdit == "7":
+                task.changeRepeatable()
+                print("Repeating settings has changed.\n")
+            elif userEdit == "8":
                 task.changeStarred()
+                print("Starred!\n")
                 return
-            # elif userEdit == "10":
+            # Adding/Editing tags
+            # elif userEdit == "9":
             #     return
-            elif userEdit == "11":
+            elif userEdit == "10":
                 userTimer = input("Set the timer to how many minutes?: ")
                 task.setTimer(userTimer)
                 print("Timer set!\n")
-            # elif userEdit == "12":
-            #     return
+            elif userEdit == "11":
+                new_title = input("What would you like to rename this task to?: ")
+                task.changeTitle(new_title)
+                print("Title has changed.\n")
             else:
                 print("That option is either currently unavailable or does not exist.")
     elif userChoice == "2":
         task.changeCompleted()
+        task.changeStartAndEnd(None, datetime.datetime.now())
 
 """
 Displays all completed task
@@ -218,8 +248,6 @@ Displays the user profile, giving access to change their data
 """
 def profile(userID):
     return
-
-
 
 
 def displayTask(task, i):
