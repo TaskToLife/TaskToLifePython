@@ -5,6 +5,7 @@
 #add sort functionality to tasksDetailed()
 
 import datetime
+from turtle import color
 from functions import *
 from classes import *
 from ObjectClasses import *
@@ -95,16 +96,24 @@ def tasksDetailed(userID):
 Adds new task the task list
 """
 def addNewTask(userID):
-    # title = input("Title: ")
-    # desc = input("Description: ")
-    # category = input("Category: ")
-    # privacy = input("Private? (Y/n): ")
-    # deadline = input("Deadline: ")
-    # newTask = createTask(userID, category, title, deadline)
-    # newTask.changeDescription(desc)
-    # if privacy == "Y".lower():
-    #     newTask.changePrivacy()
-    return
+    docs = db.collection(u"lists").where(u"userID", "==", userID).get()
+    doc_list = []
+    for doc in docs:
+        doc_list.append(doc)
+    title = input("Title: ")
+    desc = input("Description: ")
+    category_name = input("Category Name: ")
+    for i in range(len(doc_list)):
+        if doc_list[i].get("name") != category_name:
+            cat_color = input("Choose a color for the category: ")
+            createList(userID, category_name, cat_color)
+        
+    privacy = input("Public? (Y/n): ")
+    deadline = input("Deadline: ")
+    newTask = createTask(userID, category_name, title, deadline)
+    newTask.changeDescription(desc)
+    if privacy == "Y".lower():
+        newTask.changePrivacy()
 
 """
 Displays all completed task
