@@ -74,9 +74,10 @@ def tasksDetailed(userID):
     while loop:
         print(  "\n1. Edit Task",
                 "\n2. Delete Task", 
-                "\n3. Go Back")
+                "\n3. Sort/Filter List of Tasks",
+                "\n4. Go Back")
         choice = input( "What would you like to do? ")
-        while choice not in ["1", "2", "3"]:
+        while choice not in ["1", "2", "3", "4"]:
             choice = input( "Please enter a vaild number: ")
         if choice == "1":
             taskNum = input("What task you like to edit: ")
@@ -97,6 +98,8 @@ def tasksDetailed(userID):
                     taskNum = int(taskNum)
             tasks.document(taskList[taskNum - 1]).delete()
             taskList.remove(taskNum - 1)
+        elif choice == "3":
+            sortTasks(taskList, 0)
         else:
             return  
 
@@ -153,40 +156,49 @@ def editTask(task):
 Displays all completed task
 """
 def taskHistory(userID):
-    completedTaskList = []
-    docs = tasks.where("userID", "==", userID)\
-        .where("completed", "==", True).get()
-    if len(docs) > 0:
-        i = 1
-        for doc in docs:
-            task = Task(doc.id)
-
-            if (datetime.datetime.now() - task.getStartAndEnd()[1]).days < 30:
-                completedTaskList.append(task)
-                print(  "="*32,
-                        "\nTask Number:", i,
-                        "\nTitle:", task.getTitle(),
-                        "\nDescription:", task.getDescription(),
-                        "\nCompletion Date:", task.getStartAndEnd()[1].strftime("%Y-%m-%d"))
-            i += 1
-    else: 
-        print("No complete task found")
-
-    print(  "\n1. Edit Task",
-            "\n3. Go Back")
-    choice = input( "What would you like to do? ")
-    while choice not in ["1", "3"]:
-        choice = input( "Please enter a vaild number: ")
-    if choice == "1":
+    while True:
+        completedTaskList = []
+        docs = tasks.where("userID", "==", userID)\
+            .where("completed", "==", True).get()
         if len(docs) > 0:
-            taskNum = input("What task you like to edit: ")
-            while taskNum not in range(1, i):
-                taskNum = input("Please enter a vaild number: ")
-            editTask(completedTaskList[i - 1])
+            i = 1
+            for doc in docs:
+                task = Task(doc.id)
+
+                if (datetime.datetime.now() - task.getStartAndEnd()[1]).days < 30:
+                    completedTaskList.append(task)
+                    displayTaskHistory(task, i)
+                i += 1
+        else: 
+            print("No complete task found")
+
+        print(  "\n1. Edit Task",
+                "\n2. Sort/Filter Task",
+                "\n3. Clear Task History",
+                "\n4. Display Detailed Task History"
+                "\n5. Go Back")
+        choice = input( "What would you like to do? ")
+        while choice not in ["1", "2", "3", "4", "5"]:
+            choice = input( "Please enter a vaild number: ")
+        if choice == "1":
+            if len(docs) > 0:
+                taskNum = input("What task you like to edit: ")
+                while taskNum not in range(1, i):
+                    taskNum = input("Please enter a vaild number: ")
+                editTask(completedTaskList[i - 1])
+            else:
+                print("No completed tasks found")
+        elif choice == "2":
+            sortTasks(completedTaskList, 1)
+        elif choice == "3":
+            while len(completedTaskList) > 0:
+                tasks.document(taskList[0]).delete()
+                completed.remove(0)
+        elif choice == "4":
+            for i in range(len(completedTaskList)):
+                displayTask(completedTaskList[i], i+1)
         else:
-            print("No completed tasks found")
-    else:
-        return  
+            return  
 
 
 """
@@ -216,6 +228,135 @@ def displayTask(task, i):
     else:
         print("No tags specified")
 
-# Testing of task
-# tasksDetailed("GCfxc0X812iEKxQEkk3d")
+def displayTaskHistory(task, i):
+    print(  "="*32,
+    "\nTask Number:", i,
+    "\nTitle:", task.getTitle(),
+    "\nDescription:", task.getDescription(),
+    "\nCompletion Date:", task.getStartAndEnd()[1].strftime("%Y-%m-%d"))
+
+
+"""
+Gives users the ability to sort and filter the tasks
+n = 0 is taskList
+n = 1 is taskHistory
+"""
+def sortTasks(taskList, n):
+    loop = True
+    tempList = taskList.copy()
+    while loop:
+        tempList2 = []
+        print(  "1. Sort",
+                "\n2. Filter", 
+                "\n3. Go Back", 
+                "\nNote: You can filter the list as many times as you would like before or after sorting.")
+        choice = input("What would you like to do? ")
+
+        if choice == "1": #Sortting
+            print(  "Sort By: ", 
+                    "\n1. Accending", 
+                    "\n2. Deccending",
+                    "\n3. Go Back")
+            choice2 = input("What would you like to sort by? ")
+            while choice2 not in ["1", "2", "3"]:
+                choice2 = input("Please enter a vaild number: ")
+            if choice2 == "1":
+                tempList.sort(key=lambda x: x.getTitle())
+                for i in range(len(tempList)):
+                    if n == 0:
+                        displayTask(tempList[i], i+1)
+                    else:
+                        displayTaskHistory(tempList[i], i+1)
+
+            elif choice2 == "2":
+                tempList.sort(key=lambda x: x.getTitle(), reverse=True)
+                for i in range(len(tempList)):
+                    if n == 0:
+                        displayTask(tempList[i], i+1)
+                    else:
+                        displayTaskHistory(tempList[i], i+1)
+
+        elif choice == "2": #Filtering
+            print(  "Filter By:", 
+                    "\n1. Tags",
+                    "\n2. Categories",
+                    "\n3. Starred",
+                    "\n4. Go Back")
+            choice2 = input("What would you like to filter by? ")
+            while choice2 not in ["1", "2", "3"]:
+                choice2 = input("Please enter a vaild number: ")
+
+            if choice2 == "1": #Tags
+                tagList = []
+                for task in tempList:
+                    for tag in task.getTags():
+                        if tag not in tagList:
+                            tagList.append(tag)
+                if len(tagList) > 0:
+                    for i in range(len(tagList)):
+                        print(str(i+1)+". "+tag)
+                    choice3 = input("What tag would you like to filter by? ")
+                    if choice3.isdigit():
+                        choice3 = int(choice3)
+                    while choice3 not in range(1, i):
+                        choice3 = input("Please enter a vaild number: ")
+                        if choice3.isdigit():
+                            choice3 = int(choice3)
+                    for j in range(len(tempList)):
+                        task = tempList[j]
+                        if tagList[choice3 - 1] in task.getTags():
+                            tempList2.append(task)
+                            if n == 0:
+                                displayTask(task, j+1)
+                            else:
+                                displayTaskHistory(task, j+1)
+                    tempList = tempList2.copy()
+                else:
+                    print("There are no tags to filter by.")
+            
+            elif choice2 == "2": #Categories
+                categoryList = []
+                for task in tempList:
+                    if task.getCategory() not in categoryList:
+                        categoryList.append(List(task.getCategory()))
+                if len(categoryList) > 0:
+                    for i in range(len(categoryList)):
+                        print(str(i+1)+". "+categoryList[i].getName())
+                    choice3 = input("What category would you like to filter by? ")
+                    if choice3.isdigit():
+                        choice3 = int(choice3)
+                    while choice3 not in range(1, i):
+                        choice3 = input("Please enter a vaild number: ")
+                        if choice3.isdigit():
+                            choice3 = int(choice3)
+                    for j in range(len(tempList)):
+                        task = tempList[j]
+                        if categoryList[choice3 - 1].getID() in task.getCategory():
+                            tempList2.append(task)
+                            if n == 0:
+                                displayTask(task, j+1)
+                            else:
+                                displayTaskHistory(task, j+1)
+                    tempList = tempList2.copy()
+                else:
+                    print("There are no categories to filter by.")
+            
+            elif choice2 == "3": #Starred
+                for j in range(len(tempList)):
+                    task = tempList[j]
+                    if task.getStarred():
+                        tempList2.append(task)
+                if len(tempList2) > 0:
+                    for task in TempList2:
+                        if n == 0:
+                            displayTask(task, j+1)
+                        else:
+                            displayTaskHistory(task, j+1)
+                    tempList = tempList2.copy()
+                else:
+                    print("There are no task that are starred.")
+                
+        else:
+            return
+
 mainLoop("GCfxc0X812iEKxQEkk3d")

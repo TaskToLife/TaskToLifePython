@@ -24,6 +24,8 @@ class List:
 
         else:
             print("Data doesn't exist")
+            self.name = listID
+            self.listID = listID
 
     def getName(self):
         return self.name
