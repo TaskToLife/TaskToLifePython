@@ -143,29 +143,31 @@ def editTask(task):
             for i in range(len(editable_list)):
                 print(str(i+1) + ".", editable_list[i])
             userEdit = input("What would you like to edit?: ")
-            if userEdit == "1":
-                new_cat = input("What category would you like to change to?: ")
-            elif userEdit == "3":
-                return
-            elif userEdit == "4":
+            # if userEdit == "1":
+            #     new_cat = input("What category would you like to change to?: ")
+            # elif userEdit == "3":
+            #     return
+            if userEdit == "4":
                 new_desc = input("Enter your new description: ")
                 task.changeDescription(new_desc)
                 return
-            elif userEdit == "5":
-                return
-            elif userEdit == "7":
-                return
-            elif userEdit == "8":
+            # elif userEdit == "5":
+            #     return
+            # elif userEdit == "7":
+            #     return
+            # elif userEdit == "8":
                 return
             elif userEdit == "9":
                 task.changeStarred()
                 return
-            elif userEdit == "10":
-                return
+            # elif userEdit == "10":
+            #     return
             elif userEdit == "11":
-                return
-            elif userEdit == "12":
-                return
+                userTimer = input("Set the timer to how many minutes?: ")
+                task.setTimer(userTimer)
+                print("Timer set!\n")
+            # elif userEdit == "12":
+            #     return
             else:
                 print("That option is either currently unavailable or does not exist.")
     elif userChoice == "2":
@@ -238,6 +240,15 @@ def displayTask(task, i):
         print()
     else:
         print("No tags specified")
+
+    # Task failed counter goes up by 1
+    # More or less how the task gets labelled as incomplete, I guess
+    if (datetime.datetime.now() - task.getDeadline()).days > 0:
+        if task.getRepeatable() == True:
+            task.increaseFailed()
+        else:
+            task.resetFailed()
+            task.increaseFailed()
 
 # Testing of task
 # tasksDetailed("GCfxc0X812iEKxQEkk3d")
