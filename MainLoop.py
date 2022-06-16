@@ -148,6 +148,8 @@ def editTask(task):
             elif userEdit == "3":
                 return
             elif userEdit == "4":
+                new_desc = input("Enter your new description: ")
+                task.changeDescription(new_desc)
                 return
             elif userEdit == "5":
                 return
@@ -156,6 +158,7 @@ def editTask(task):
             elif userEdit == "8":
                 return
             elif userEdit == "9":
+                task.changeStarred()
                 return
             elif userEdit == "10":
                 return
