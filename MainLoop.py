@@ -118,7 +118,7 @@ def addNewTask(userID):
     for doc in docs:
         doc_list.append(doc)
 
-    title = input("Title: ")
+    title = None
     desc = input("Description: ")
     category_name = input("Category Name: ")
     catID = None
