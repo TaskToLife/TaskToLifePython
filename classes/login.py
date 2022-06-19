@@ -36,13 +36,14 @@ def signUp() -> Player or int:
 def login(email, password) -> int:
     data = snapToDict(logins.where("email", "==", email.lower()))
     if data == {}:
-        return -1
+        return -1, None
 
+    key = list(data.keys())[0]
     data = getData(data)
     success = bcrypt.checkpw(password.encode(), data["password"])
     if success:
-        return 1
-    return 0
+        return 1, key
+    return 0, None
 
 
 # Change password function

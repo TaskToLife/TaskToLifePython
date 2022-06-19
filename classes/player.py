@@ -247,7 +247,8 @@ def createPlayer() -> Player:
             "start": 6,
             "end": 22,
             "username": requests.get("https://randomuser.me/api/").json()["results"][0]["login"]["username"],
-            "xp": 0
+            "xp": 0,
+            "blocked_notifications": []
         }
     )
     return Player(key)
