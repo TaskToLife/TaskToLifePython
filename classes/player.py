@@ -1,7 +1,12 @@
+import os
 import datetime
 import requests
+from notify_run import Notify
+from dotenv import load_dotenv
 from functions.functions import *
 from firebase_admin import firestore
+
+load_dotenv()
 
 db = firestore.client()
 players = db.collection('players')
@@ -18,9 +23,10 @@ class Player:
             self.categories = data["categories"]
             self.friend_req = data["friend_req"]
             self.friends = data["friends"]
-            self.notifications = data["notifications"]
+            self.notifications = data["notifications"]  # List of notification elems: {text: String, type: String}
             self.plant = data["plant"]  # { growth: [list of int per week], startDate: date, type: string }
             self.socials = data["socials"]  # {Social (like FaceBook for example): string (username)}
+            self.blocked_notifications = data["blocked_notifications"]  # [types: report, friend_req, task, collab]
 
             # Integer elements
             self.currency = data["currency"]
@@ -165,11 +171,19 @@ class Player:
     def getNotifications(self):
         return self.notifications
 
-    def addNotification(self, notification):
+    def addNotification(self, notification: dict):
+        if notification["type"] in self.blocked_notifications:
+            return
         self.notifications.append(notification)
         players.document(self.userID).update({
             "notifications": self.notifications
         })
+
+    def sendNotification(self, notification: dict):
+        if notification["type"] in self.blocked_notifications:
+            return
+        notify = Notify(endpoint=os.getenv('NTF_URL'))
+        notify.send(notification["text"])
 
     def getPlant(self):
         return self.plant
@@ -231,7 +245,7 @@ def createPlayer() -> Player:
             },
             "socials": {},
             "start": 6,
-            "end": 10,
+            "end": 22,
             "username": requests.get("https://randomuser.me/api/").json()["results"][0]["login"]["username"],
             "xp": 0
         }
