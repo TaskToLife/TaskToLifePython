@@ -318,6 +318,7 @@ def displayTask(task, i):
             task.resetFailed()
             task.increaseFailed()
 
+def displayTaskHistory(task, i):
     print("=" * 32,
           "\nTask Number:", i,
           "\nTitle:", task.getTitle(),
