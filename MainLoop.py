@@ -32,6 +32,7 @@ def mainLoop(userID):
             taskHistory(userID)
         elif choice == "4":
             profile(userID)
+            print("NOT DONE AT THIS STAGE")
         elif choice == "5":
             loop = False
             print("Logging Out...")
@@ -99,7 +100,7 @@ def tasksDetailed(userID):
                 taskNum = input("Please enter a valid number: ")
                 if taskNum.isdigit():  # check2
                     taskNum = int(taskNum)
-            tasks.document(taskList[taskNum - 1]).delete()
+            tasks.document(taskList[taskNum - 1].getID()).delete()
             taskList.pop(taskNum - 1)
         elif choice == "3":
             sortTasks(taskList, 0)
@@ -122,15 +123,27 @@ def addNewTask(userID):
     desc = input("Description: ")
     category_name = input("Category Name: ")
     catID = None
+    catList = []
     for i in range(len(doc_list)):
-        if doc_list[i].get("name") != category_name:
-            cat_color = input("Choose a color for the category: ")
-            catID = createList(userID, category_name, cat_color)
-            break
+        catList.append(doc_list[i].get("name"))
+        if doc_list[i].get("name") == category_name:
+            catID = doc_list[i].id
+    if category_name not in catList:
+        cat_color = input("Choose a color for the category: ")
+        catID = createList(userID, category_name, cat_color).getID()
+        
 
     privacy = input("Public? (Y/n): ")
-    deadline = input("Deadline: ")
-    newTask = createTask(userID, catID.getID(), title, deadline)
+    deadline = input("Deadline[YYYY-MM-DD]: ") #datetime
+    while True:
+        try:
+            deadline = datetime.datetime.strptime(deadline, "%Y-%m-%d")
+        except Exception:
+            deadline = input("Please enter a proper date[YYYY-MM-DD]: ")
+        else:
+            break
+
+    newTask = createTask(userID, catID, title, deadline)
     newTask.changeDescription(desc)
     if privacy == "Y".lower():
         newTask.changePrivacy()
@@ -160,42 +173,43 @@ def editTask(userID, task):
             for i in range(len(editable_list)):
                 print(str(i + 1) + ".", editable_list[i])
             userEdit = input("What would you like to edit?: ")
-            # Category change not working atm
-            # if userEdit == "1":
-            #     new_cat = input("What category would you like to change to?: ")
-            #     for i in range(len(doc_list)):
-            #         if doc_list[i].get("name") == new_cat:
-            #             task.changeCategory(doc_list[i])
-            #             break
-            #         else:
-            #             cat_color = input("Choose a color for the category: ")
-            #             catID = createList(userID, new_cat, cat_color)
-            #             task.changeCategory(catID.getID())
-            #             break
-            # No idea what do with this
-            # elif userEdit == "2":
-            #     return
-            if userEdit == "3":
+            if userEdit == "1":
+                new_cat = input("What category would you like to change to?: ")
+                for i in range(len(doc_list)):
+                    if doc_list[i].get("name") == new_cat:
+                        task.changeCategory(doc_list[i].id) 
+                        break
+                    else:
+                        cat_color = input("Choose a color for the category: ")
+                        catID = createList(userID, new_cat, cat_color)
+                        task.changeCategory(catID.getID())
+                        break
+                print("Category has been changed to {}.\n".format(task.getCategory()))
+            elif userEdit == "2":
+                print("Multi-User is not gonna be done at this stage")
+            elif userEdit == "3":
                 new_deadline = input("Please enter your new deadline (YYYY-MM-DD): ")
                 task.setDeadline(new_deadline)
-            if userEdit == "4":
+            elif userEdit == "4":
                 new_desc = input("Enter your new description: ")
                 task.changeDescription(new_desc)
                 print("Description has been changed.\n")
-                return
-            # Editing Location, not sure how we wanna do this
-            # elif userEdit == "5":
-            #     return
+            elif userEdit == "5":
+                newLoc = input("Enter your new location: ")
+                task.changeLocation(newLoc)
+                print("Location has been changed to {}.\n".format(newLoc))
             elif userEdit == "6":
                 task.changePrivacy()
                 print("Privacy has been changed.\n")
-                return
             elif userEdit == "7":
                 task.changeRepeatable()
                 print("Repeating settings has changed.\n")
             elif userEdit == "8":
                 task.changeStarred()
-                print("Starred!\n")
+                if task.getStarred():
+                    print("Starred!\n")
+                else:
+                    print("Unstarred\n")
                 return
             # Adding/Editing tags
             # elif userEdit == "9":
@@ -218,23 +232,20 @@ def editTask(userID, task):
 """
 Displays all completed task
 """
-
-
 def taskHistory(userID):
     while True:
         completedTaskList = []
         docs = tasks.where("userID", "==", userID) \
             .where("completed", "==", True).get()
-        i = 0
+        i = 1
         if len(docs) > 0:
-            i = 1
             for doc in docs:
                 task = Task(doc.id)
 
                 if (datetime.datetime.now() - task.getStartAndEnd()[1]).days < 30:
                     completedTaskList.append(task)
                     displayTaskHistory(task, i)
-                i += 1
+                    i += 1
         else:
             print("No complete task found")
 
@@ -249,20 +260,25 @@ def taskHistory(userID):
         if choice == "1":
             if len(docs) > 0:
                 taskNum = input("What task you like to edit: ")
+                if taskNum.isdigit():  # check
+                    taskNum = int(taskNum)
                 while taskNum not in range(1, i):
                     taskNum = input("Please enter a valid number: ")
-                editTask(completedTaskList[i - 1])
+                    if taskNum.isdigit():  # check
+                        taskNum = int(taskNum)
+                editTask(completedTaskList[taskNum - 1])
             else:
                 print("No completed tasks found")
         elif choice == "2":
             sortTasks(completedTaskList, 1)
         elif choice == "3":
             while len(completedTaskList) > 0:
-                tasks.document(completedTaskList[0]).delete()
+                tasks.document(completedTaskList[0].getID()).delete()
                 completedTaskList.pop(0)
         elif choice == "4":
             for i in range(len(completedTaskList)):
                 displayTask(completedTaskList[i], i + 1)
+            return
         else:
             return
 
@@ -270,8 +286,6 @@ def taskHistory(userID):
 """
 Displays the user profile, giving access to change their data
 """
-
-
 def profile(userID):
     pass
 
@@ -304,6 +318,7 @@ def displayTask(task, i):
             task.resetFailed()
             task.increaseFailed()
 
+def displayTaskHistory(task, i):
     print("=" * 32,
           "\nTask Number:", i,
           "\nTitle:", task.getTitle(),
