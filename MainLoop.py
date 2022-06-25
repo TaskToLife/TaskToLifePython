@@ -1,9 +1,3 @@
-# TODO:
-# add addNewTask()
-# add profile()
-# add editTask()
-# add sort functionality to tasksDetailed()
-
 from ObjectClasses import *
 
 """
@@ -184,7 +178,7 @@ def editTask(userID, task):
                         catID = createList(userID, new_cat, cat_color)
                         task.changeCategory(catID.getID())
                         break
-                print("Category has been changed to {}.\n".format(task.getCategory()))
+                print("Category has been changed to {}.\n".format(task.getCategory())) #Should say the category name
             elif userEdit == "2":
                 print("Multi-User is not gonna be done at this stage")
             elif userEdit == "3":
