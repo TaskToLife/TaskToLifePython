@@ -35,8 +35,8 @@ def main():
         elif choice == "2":
             signUp()
         elif choice == "3":
-            # info()
-            pass
+            info()
+            # pass
         elif choice == "4":
             loop = False
             print("Quitting...")
